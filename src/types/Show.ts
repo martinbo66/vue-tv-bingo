@@ -1,6 +1,6 @@
 export interface Show {
-    showTitle: String;
-    gameTitle?: String;
-    centerSquare?: String;
-    phrases: String[];
+    showTitle: string;
+    gameTitle?: string;
+    centerSquare?: string;
+    phrases: string[];
 }

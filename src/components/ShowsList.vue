@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Show } from '../types/Show'
+import CreateShow from './CreateShow.vue'
 
 const router = useRouter()
 const shows = ref<Show[]>([
@@ -24,11 +25,16 @@ const shows = ref<Show[]>([
 const navigateToShow = (index: number) => {
   router.push(`/show/${index}`)
 }
+
+const addShow = (newShow: Show) => {
+  shows.value.push(newShow)
+}
 </script>
 
 <template>
     <div class="shows-container">
         <h2>TV Shows</h2>
+        <CreateShow @show-created="addShow" />
         <div class="shows-list">
             <div 
               v-for="(show, index) in shows" 
