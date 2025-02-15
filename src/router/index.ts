@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ShowsList from '../components/ShowsList.vue'
 import ShowDetail from '../components/ShowDetail.vue'
+import CreateShowPage from '../pages/CreateShowPage.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -13,6 +14,10 @@ const router = createRouter({
       path: '/show/:index',
       component: ShowDetail,
       props: true
+    },
+    {
+      path: '/create',
+      component: CreateShowPage
     }
   ]
 })

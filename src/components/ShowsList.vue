@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Show } from '../types/Show'
-import CreateShow from './CreateShow.vue'
 
 const router = useRouter()
 const shows = ref<Show[]>([
@@ -33,8 +32,10 @@ const addShow = (newShow: Show) => {
 
 <template>
     <div class="shows-container">
-        <h2>TV Shows</h2>
-        <CreateShow @show-created="addShow" />
+        <div class="header">
+            <h2>TV Shows</h2>
+            <router-link to="/create" class="add-show-link">+ Add Show</router-link>
+        </div>
         <div class="shows-list">
             <div 
               v-for="(show, index) in shows" 
@@ -53,6 +54,28 @@ const addShow = (newShow: Show) => {
 <style scoped>
 .shows-container {
     padding: 2rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.add-show-link {
+    display: inline-block;
+    padding: 0.6em 1.2em;
+    background-color: #646cff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.add-show-link:hover {
+    background-color: #747bff;
 }
 
 .shows-list {
