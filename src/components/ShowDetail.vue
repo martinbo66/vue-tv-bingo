@@ -1,0 +1,181 @@
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import type { Show } from '../types/Show'
+
+const props = defineProps<{
+  index: string
+}>()
+
+const router = useRouter()
+const shows = ref<Show[]>([
+    {
+        showTitle: "Hollywood Squares",
+        gameTitle: "The Hollywood Squares",
+        centerSquare: "Paul Lynde",
+        phrases: ["I'll take the center square to block", "X gets the square!", "Circle gets the square!"]
+    },
+    {
+        showTitle: "Match Game",
+        phrases: ["Blank blank", "Good answer!", "Survey says..."]
+    },
+    {
+        showTitle: "Password",
+        phrases: ["The password is...", "No help!", "Pass the word!"]
+    }
+])
+
+const show = ref<Show>({ ...shows.value[parseInt(props.index)] })
+const newPhrase = ref('')
+
+const phraseCount = computed(() => show.value.phrases.length)
+
+const addPhrase = () => {
+  if (newPhrase.value.trim()) {
+    show.value.phrases.push(newPhrase.value)
+    newPhrase.value = ''
+  }
+}
+
+const removePhrase = (index: number) => {
+  show.value.phrases.splice(index, 1)
+}
+
+const saveShow = () => {
+  shows.value[parseInt(props.index)] = { ...show.value }
+  router.push('/')
+}
+</script>
+
+<template>
+  <div class="show-detail">
+    <h2>Edit TV Show</h2>
+    <form @submit.prevent="saveShow" class="edit-form">
+      <div class="form-group">
+        <label>Show Title:</label>
+        <input v-model="show.showTitle" required />
+      </div>
+      
+      <div class="form-group">
+        <label>Game Title:</label>
+        <input v-model="show.gameTitle" />
+      </div>
+      
+      <div class="form-group">
+        <label>Center Square:</label>
+        <input v-model="show.centerSquare" />
+      </div>
+
+      <div class="form-group">
+        <label>Phrases ({{ phraseCount }}):</label>
+        <div class="phrases-list">
+          <div v-for="(phrase, index) in show.phrases" :key="index" class="phrase-item">
+            <span>{{ phrase }}</span>
+            <button type="button" @click="removePhrase(index)" class="remove-btn">×</button>
+          </div>
+        </div>
+        <div class="add-phrase">
+          <input v-model="newPhrase" placeholder="New phrase" />
+          <button type="button" @click="addPhrase">Add</button>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button type="button" @click="router.push('/')" class="cancel-btn">Cancel</button>
+        <button type="submit" class="save-btn">Save</button>
+      </div>
+    </form>
+  </div>
+</template>
+
+<style scoped>
+.show-detail {
+  padding: 2rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.edit-form {
+  background-color: #1a1a1a;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #888;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  background-color: #2c2c2c;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.phrases-list {
+  margin: 1rem 0;
+}
+
+.phrase-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #2c2c2c;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #ff4444;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+}
+
+.add-phrase {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.add-phrase input {
+  flex: 1;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.cancel-btn {
+  background-color: #444;
+}
+
+.save-btn {
+  background-color: #646cff;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+</style>
