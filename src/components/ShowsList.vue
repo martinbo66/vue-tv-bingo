@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { showService } from '../services/showService'
-import type { Show } from '../services/showService'
+import type { Show } from '../types/Show'
 
 const router = useRouter()
 const shows = ref<Show[]>([])
@@ -22,8 +22,8 @@ const fetchShows = async () => {
   }
 }
 
-const navigateToShow = (id: number) => {
-  router.push(`/show/${id}`)
+const navigateToShow = (showTitle: string) => {
+  router.push(`/show/${encodeURIComponent(showTitle)}`)
 }
 
 onMounted(() => {
@@ -50,13 +50,23 @@ onMounted(() => {
         <div v-else class="shows-list">
             <div 
               v-for="show in shows" 
-              :key="show.id" 
+              :key="show.showTitle" 
               class="show-card"
-              @click="navigateToShow(show.id)"
+              @click="navigateToShow(show.showTitle)"
             >
-                <h3>{{ show.title }}</h3>
-                <p class="description">{{ show.description }}</p>
-                <p class="genre">{{ show.genre }}</p>
+                <h3>{{ show.showTitle }}</h3>
+                <div v-if="show.gameTitle" class="game-title">
+                    Also known as: {{ show.gameTitle }}
+                </div>
+                <div v-if="show.centerSquare" class="center-square">
+                    Center Square: {{ show.centerSquare }}
+                </div>
+                <div class="phrases">
+                    <h4>Famous Phrases:</h4>
+                    <ul>
+                        <li v-for="phrase in show.phrases" :key="phrase">{{ phrase }}</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -85,7 +95,7 @@ onMounted(() => {
 
 .shows-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 20px;
 }
 
@@ -106,20 +116,42 @@ onMounted(() => {
 .show-card h3 {
     margin: 0 0 12px 0;
     color: #2c3e50;
+    font-size: 1.4em;
 }
 
-.description {
+.show-card h4 {
+    color: #2c3e50;
+    margin: 16px 0 8px;
+    font-size: 1.1em;
+}
+
+.game-title, .center-square {
     color: #666;
     font-size: 0.9em;
     margin: 8px 0;
-    line-height: 1.4;
+    font-style: italic;
 }
 
-.genre {
-    color: #4CAF50;
-    font-size: 0.8em;
-    font-weight: 600;
-    margin-top: 12px;
+.phrases {
+    margin-top: 16px;
+}
+
+.phrases ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.phrases li {
+    color: #666;
+    font-size: 0.9em;
+    padding: 4px 0;
+    margin: 4px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.phrases li:last-child {
+    border-bottom: none;
 }
 
 .loading {
