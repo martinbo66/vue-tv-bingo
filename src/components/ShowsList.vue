@@ -1,33 +1,34 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import type { Show } from '../types/Show'
+import { showService } from '../services/showService'
+import type { Show } from '../services/showService'
 
 const router = useRouter()
-const shows = ref<Show[]>([
-    {
-        showTitle: "Hollywood Squares",
-        gameTitle: "The Hollywood Squares",
-        centerSquare: "Paul Lynde",
-        phrases: ["I'll take the center square to block", "X gets the square!", "Circle gets the square!"]
-    },
-    {
-        showTitle: "Match Game",
-        phrases: ["Blank blank", "Good answer!", "Survey says..."]
-    },
-    {
-        showTitle: "Password",
-        phrases: ["The password is...", "No help!", "Pass the word!"]
-    }
-])
+const shows = ref<Show[]>([])
+const loading = ref(false)
+const error = ref<string | null>(null)
 
-const navigateToShow = (index: number) => {
-  router.push(`/show/${index}`)
+const fetchShows = async () => {
+  loading.value = true
+  error.value = null
+  try {
+    shows.value = await showService.getShows()
+  } catch (e) {
+    error.value = 'Failed to load shows'
+    console.error(e)
+  } finally {
+    loading.value = false
+  }
 }
 
-const addShow = (newShow: Show) => {
-  shows.value.push(newShow)
+const navigateToShow = (id: number) => {
+  router.push(`/show/${id}`)
 }
+
+onMounted(() => {
+  fetchShows()
+})
 </script>
 
 <template>
@@ -36,16 +37,26 @@ const addShow = (newShow: Show) => {
             <h2>TV Shows</h2>
             <router-link to="/create" class="add-show-link">+ Add Show</router-link>
         </div>
-        <div class="shows-list">
+        
+        <div v-if="loading" class="loading">
+            Loading shows...
+        </div>
+        
+        <div v-else-if="error" class="error">
+            {{ error }}
+            <button @click="fetchShows" class="retry-button">Retry</button>
+        </div>
+        
+        <div v-else class="shows-list">
             <div 
-              v-for="(show, index) in shows" 
-              :key="show.showTitle" 
+              v-for="show in shows" 
+              :key="show.id" 
               class="show-card"
-              @click="navigateToShow(index)"
+              @click="navigateToShow(show.id)"
             >
-                <h3>{{ show.showTitle }}</h3>
-                <p v-if="show.gameTitle" class="game-title">Also known as: {{ show.gameTitle }}</p>
-                <p v-if="show.centerSquare" class="center-square">Center Square: {{ show.centerSquare }}</p>
+                <h3>{{ show.title }}</h3>
+                <p class="description">{{ show.description }}</p>
+                <p class="genre">{{ show.genre }}</p>
             </div>
         </div>
     </div>
@@ -53,64 +64,87 @@ const addShow = (newShow: Show) => {
 
 <style scoped>
 .shows-container {
-    padding: 2rem;
+    padding: 20px;
 }
 
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 20px;
 }
 
 .add-show-link {
-    display: inline-block;
-    padding: 0.6em 1.2em;
-    background-color: #646cff;
-    color: white;
     text-decoration: none;
+    color: #4CAF50;
+    font-weight: bold;
+    padding: 8px 16px;
     border-radius: 4px;
-    font-weight: 500;
-    transition: background-color 0.2s;
-}
-
-.add-show-link:hover {
-    background-color: #747bff;
+    background-color: #e8f5e9;
 }
 
 .shows-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
 }
 
 .show-card {
-    background-color: #1a1a1a;
+    background-color: white;
     border-radius: 8px;
-    padding: 1.5rem;
-    text-align: left;
+    padding: 20px;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .show-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
-h2 {
-    font-size: 2em;
-    margin-bottom: 1rem;
+.show-card h3 {
+    margin: 0 0 12px 0;
+    color: #2c3e50;
 }
 
-h3 {
-    color: #646cff;
-    margin: 0 0 1rem 0;
+.description {
+    color: #666;
+    font-size: 0.9em;
+    margin: 8px 0;
+    line-height: 1.4;
 }
 
-.game-title, .center-square {
-    color: #888;
-    font-style: italic;
-    margin: 0.5rem 0;
+.genre {
+    color: #4CAF50;
+    font-size: 0.8em;
+    font-weight: 600;
+    margin-top: 12px;
+}
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+.error {
+    text-align: center;
+    padding: 40px;
+    color: #f44336;
+}
+
+.retry-button {
+    margin-top: 16px;
+    padding: 8px 16px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.retry-button:hover {
+    background-color: #d32f2f;
 }
 </style>
