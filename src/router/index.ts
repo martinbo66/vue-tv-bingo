@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import ShowsList from '../components/ShowsList.vue'
 import ShowDetail from '../components/ShowDetail.vue'
 import CreateShowPage from '../pages/CreateShowPage.vue'
+import BingoCard from '../pages/BingoCard.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -12,6 +13,11 @@ const router = createRouter({
     },
     {
       path: '/show/:id',
+      component: BingoCard,
+      props: true
+    },
+    {
+      path: '/show/:id/edit',
       component: ShowDetail,
       props: true
     },

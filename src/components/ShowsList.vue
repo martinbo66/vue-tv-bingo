@@ -26,6 +26,24 @@ const navigateToShow = (showId: number) => {
   router.push(`/show/${showId}`)
 }
 
+const handleEdit = (event: Event, showId: number) => {
+  event.stopPropagation()
+  router.push(`/show/${showId}/edit`)
+}
+
+const handleDelete = async (event: Event, showId: number) => {
+  event.stopPropagation()
+  if (confirm('Are you sure you want to delete this show?')) {
+    try {
+      await showService.deleteShow(showId)
+      await fetchShows()
+    } catch (e) {
+      error.value = 'Failed to delete show'
+      console.error(e)
+    }
+  }
+}
+
 onMounted(() => {
   fetchShows()
 })
@@ -54,9 +72,27 @@ onMounted(() => {
               class="show-card"
               @click="navigateToShow(show.id)"
             >
-                <h3>{{ show.showTitle }}</h3>
-                <div v-if="show.gameTitle" class="game-title">
-                    {{ show.gameTitle }}
+                <div class="show-content">
+                    <h3>{{ show.showTitle }}</h3>
+                    <div v-if="show.gameTitle" class="game-title">
+                        {{ show.gameTitle }}
+                    </div>
+                </div>
+                <div class="show-controls">
+                    <button 
+                        class="control-btn edit-btn" 
+                        @click="(e) => handleEdit(e, show.id)"
+                        title="Edit show"
+                    >
+                        ✏️
+                    </button>
+                    <button 
+                        class="control-btn delete-btn" 
+                        @click="(e) => handleDelete(e, show.id)"
+                        title="Delete show"
+                    >
+                        🗑️
+                    </button>
                 </div>
             </div>
         </div>
@@ -91,12 +127,45 @@ onMounted(() => {
 }
 
 .show-card {
-    background-color: white;
+    background-color: rgb(191, 122, 216);
     border-radius: 8px;
     padding: 20px;
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.show-content {
+    flex: 1;
+}
+
+.show-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.control-btn:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.edit-btn {
+    font-size: 1.2em;
+}
+
+.delete-btn {
+    font-size: 1.2em;
 }
 
 .show-card:hover {
