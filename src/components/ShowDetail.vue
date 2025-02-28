@@ -44,9 +44,18 @@ const removePhrase = (index: number) => {
   show.value.phrases.splice(index, 1)
 }
 
-const saveShow = () => {
-  shows.value[parseInt(props.index)] = { ...show.value }
-  router.push('/')
+const saveShow = async () => {
+  if (!show.value) return
+  
+  try {
+    // Create a plain JavaScript object copy without reactive proxies
+    const plainShow = JSON.parse(JSON.stringify(show.value))
+    await showService.updateShow(plainShow)
+    router.push('/')
+  } catch (e) {
+    error.value = 'Failed to save show'
+    console.error(e)
+  }
 }
 </script>
 

@@ -42,12 +42,16 @@ export const showService = {
 
   async addShow(show: Show): Promise<void> {
     const db = await dbPromise;
-    await db.put(STORE_NAME, show);
+    // Ensure we're working with a plain object
+    const plainShow = JSON.parse(JSON.stringify(show));
+    await db.put(STORE_NAME, plainShow);
   },
 
   async updateShow(show: Show): Promise<void> {
     const db = await dbPromise;
-    await db.put(STORE_NAME, show);
+    // Ensure we're working with a plain object
+    const plainShow = JSON.parse(JSON.stringify(show));
+    await db.put(STORE_NAME, plainShow);
   },
 
   async deleteShow(id: number): Promise<void> {
