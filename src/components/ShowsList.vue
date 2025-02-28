@@ -56,16 +56,7 @@ onMounted(() => {
             >
                 <h3>{{ show.showTitle }}</h3>
                 <div v-if="show.gameTitle" class="game-title">
-                    Also known as: {{ show.gameTitle }}
-                </div>
-                <div v-if="show.centerSquare" class="center-square">
-                    Center Square: {{ show.centerSquare }}
-                </div>
-                <div class="phrases">
-                    <h4>Famous Phrases:</h4>
-                    <ul>
-                        <li v-for="phrase in show.phrases" :key="phrase">{{ phrase }}</li>
-                    </ul>
+                    {{ show.gameTitle }}
                 </div>
             </div>
         </div>
@@ -125,33 +116,11 @@ onMounted(() => {
     font-size: 1.1em;
 }
 
-.game-title, .center-square {
+.game-title {
     color: #666;
-    font-size: 0.9em;
+    font-size: 0.95em;
     margin: 8px 0;
     font-style: italic;
-}
-
-.phrases {
-    margin-top: 16px;
-}
-
-.phrases ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.phrases li {
-    color: #666;
-    font-size: 0.9em;
-    padding: 4px 0;
-    margin: 4px 0;
-    border-bottom: 1px solid #eee;
-}
-
-.phrases li:last-child {
-    border-bottom: none;
 }
 
 .loading {
