@@ -4,8 +4,10 @@
 <template>
   <div class="app-container">
     <header class="header">
-      <img src="./assets/tvo-show-biingo.webp" alt="TV Show Bingo" 
-      class="header-image" width="200" />
+      <router-link to="/">
+        <img src="./assets/tv-bingo-round.jpg" alt="TV Show Bingo" 
+        class="header-image" width="200" />
+      </router-link>
     </header>
     <router-view></router-view>
   </div>
