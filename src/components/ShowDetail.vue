@@ -1,31 +1,34 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Show } from '../types/Show'
+import { showService } from '../services/showService'
 
 const props = defineProps<{
-  index: string
+  id: string
 }>()
 
 const router = useRouter()
-const shows = ref<Show[]>([
-    {
-        showTitle: "Hollywood Squares",
-        gameTitle: "The Hollywood Squares",
-        centerSquare: "Paul Lynde",
-        phrases: ["I'll take the center square to block", "X gets the square!", "Circle gets the square!"]
-    },
-    {
-        showTitle: "Match Game",
-        phrases: ["Blank blank", "Good answer!", "Survey says..."]
-    },
-    {
-        showTitle: "Password",
-        phrases: ["The password is...", "No help!", "Pass the word!"]
-    }
-])
+const show = ref<Show | null>(null)
+const loading = ref(true)
+const error = ref<string | null>(null)
 
-const show = ref<Show>({ ...shows.value[parseInt(props.index)] })
+onMounted(async () => {
+  try {
+    const loadedShow = await showService.getShowById(parseInt(props.id))
+    if (loadedShow) {
+      show.value = { ...loadedShow }
+    } else {
+      error.value = 'Show not found'
+      router.push('/')
+    }
+  } catch (e) {
+    error.value = 'Failed to load show'
+    console.error(e)
+  } finally {
+    loading.value = false
+  }
+})
 const newPhrase = ref('')
 
 const phraseCount = computed(() => show.value.phrases.length)
@@ -49,7 +52,16 @@ const saveShow = () => {
 
 <template>
   <div class="show-detail">
-    <h2>Edit TV Show</h2>
+    <div v-if="loading" class="loading">
+      Loading show...
+    </div>
+
+    <div v-else-if="error" class="error">
+      {{ error }}
+    </div>
+
+    <div v-else>
+      <h2>Edit TV Show</h2>
     <form @submit.prevent="saveShow" class="edit-form">
       <div class="form-group">
         <label>Show Title:</label>
@@ -85,6 +97,7 @@ const saveShow = () => {
         <button type="submit" class="save-btn">Save</button>
       </div>
     </form>
+    </div>
   </div>
 </template>
 

@@ -8,8 +8,8 @@ export const showService = {
     return SHOWS;
   },
 
-  getShowById: async (showTitle: string): Promise<Show | undefined> => {
+  getShowById: async (id: number): Promise<Show | undefined> => {
     await new Promise(resolve => setTimeout(resolve, 300));
-    return SHOWS.find(show => show.showTitle === showTitle);
+    return SHOWS.find(show => show.id === id);
   }
 };

@@ -11,7 +11,7 @@ const router = createRouter({
       component: ShowsList
     },
     {
-      path: '/show/:index',
+      path: '/show/:id',
       component: ShowDetail,
       props: true
     },

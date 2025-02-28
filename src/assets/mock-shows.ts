@@ -2,6 +2,7 @@ import { Show } from '../types/Show';
 
 export const SHOWS: Show[] = [
       {
+        id: 1,
         showTitle: 'Survivor',
         gameTitle: 'Got Nothing For Ya',
         centerSquare: 'This is Survivor',
@@ -36,6 +37,7 @@ export const SHOWS: Show[] = [
         ]
       },
       {
+        id: 2,
         showTitle: 'Toddlers and Tiaras',
         gameTitle: 'Blingo',
         centerSquare: 'Nini is a hard working lady!',
@@ -77,6 +79,7 @@ export const SHOWS: Show[] = [
         ]
       },
       {
+        id: 3,
         showTitle: 'Top Chef',
         phrases: [
           '(Use of tiny tweezers)',
@@ -124,6 +127,7 @@ export const SHOWS: Show[] = [
         ]
       },
       {
+        id: 4,
         showTitle: 'Ancient Aliens',
         gameTitle: 'Contact!',
         centerSquare: 'AA Theorists Say Yes',

@@ -22,8 +22,8 @@ const fetchShows = async () => {
   }
 }
 
-const navigateToShow = (showTitle: string) => {
-  router.push(`/show/${encodeURIComponent(showTitle)}`)
+const navigateToShow = (showId: number) => {
+  router.push(`/show/${showId}`)
 }
 
 onMounted(() => {
@@ -50,9 +50,9 @@ onMounted(() => {
         <div v-else class="shows-list">
             <div 
               v-for="show in shows" 
-              :key="show.showTitle" 
+              :key="show.id" 
               class="show-card"
-              @click="navigateToShow(show.showTitle)"
+              @click="navigateToShow(show.id)"
             >
                 <h3>{{ show.showTitle }}</h3>
                 <div v-if="show.gameTitle" class="game-title">
