@@ -60,8 +60,16 @@ const loadShow = async () => {
       error.value = 'Show not found'
       return
     }
+    
+    // Check if there are at least 24 phrases
+    if (!fetchedShow.phrases || fetchedShow.phrases.length < 24) {
+      error.value = 'This show needs at least 24 phrases to create a bingo card'
+      show.value = fetchedShow // Still set the show so we can navigate to edit
+      return
+    }
+    
     show.value = fetchedShow
-    bingoGrid.value = generateBingoGrid(fetchedShow.phrases || [], fetchedShow.centerSquare)
+    bingoGrid.value = generateBingoGrid(fetchedShow.phrases, fetchedShow.centerSquare)
   } catch (e) {
     error.value = 'Failed to load show'
     console.error(e)
@@ -82,7 +90,10 @@ onMounted(() => {
     </div>
 
     <div v-else-if="error" class="error">
-      {{ error }}
+      <p>{{ error }}</p>
+      <div v-if="show && error.includes('24 phrases')" class="error-actions">
+        <button @click="navigateToShowDetail" class="edit-button">Edit Show</button>
+      </div>
     </div>
 
     <div v-else-if="show" class="bingo-card-container">
@@ -199,5 +210,28 @@ onMounted(() => {
 
 .error {
   color: #dc2626;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.error-actions {
+  margin-top: 1rem;
+}
+
+.edit-button {
+  background-color: #4a6cf7;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.edit-button:hover {
+  background-color: #3a5ce5;
 }
 </style>
