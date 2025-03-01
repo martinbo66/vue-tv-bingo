@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { showService } from '../services/showService'
 import type { Show } from '../types/Show'
 
 const route = useRoute()
+const router = useRouter()
 const show = ref<Show | null>(null)
 const bingoGrid = ref<string[]>([])
 const loading = ref(true)
@@ -36,6 +37,12 @@ const toggleCell = (index: number) => {
     selectedCells.value.delete(index)
   } else {
     selectedCells.value.add(index)
+  }
+}
+
+const navigateToShowDetail = () => {
+  if (show.value) {
+    router.push(`/show/${show.value.id}/edit`)
   }
 }
 
@@ -80,7 +87,7 @@ onMounted(() => {
 
     <div v-else-if="show" class="bingo-card-container">
       <div class="header">
-        <h2>{{ show.showTitle }}</h2>
+        <h2 @click="navigateToShowDetail" class="show-title">{{ show.showTitle }}</h2>
         <router-link to="/" class="back-link">← Back to Shows</router-link>
       </div>
 
@@ -114,6 +121,16 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+}
+
+.show-title {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.show-title:hover {
+  color: #4a6cf7;
+  text-decoration: underline;
 }
 
 .back-link {
