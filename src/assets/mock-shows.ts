@@ -37,6 +37,39 @@ export const SHOWS: Show[] = [
         ]
       },
       {
+        id: 5,
+        showTitle: 'North Woods Law',
+        gameTitle: 'On Patrol',
+        centerSquare: 'Conservation Officer',
+        phrases: [
+          'Animal in distress',
+          'Backup requested',
+          'Checking licenses',
+          'Conservation efforts',
+          'Dispatch',
+          'Fish and Game',
+          'Hunting season',
+          'Illegal activity',
+          'Investigating a complaint',
+          'K-9 unit',
+          'License and registration',
+          'Night patrol',
+          'Off-road vehicle',
+          'Poaching',
+          'Probable cause',
+          'Public safety',
+          'Radio call',
+          'Search and rescue',
+          'Suspicious activity',
+          'That\'s a violation',
+          'Trail camera',
+          'Undercover operation',
+          'Wildlife management',
+          'Warden service',
+          'Zero tolerance'
+        ]
+      },
+      {
         id: 2,
         showTitle: 'Toddlers and Tiaras',
         gameTitle: 'Blingo',
@@ -81,6 +114,7 @@ export const SHOWS: Show[] = [
       {
         id: 3,
         showTitle: 'Top Chef',
+        centerSquare: 'Chef Boyar',
         phrases: [
           '(Use of tiny tweezers)',
           'Acidity',
