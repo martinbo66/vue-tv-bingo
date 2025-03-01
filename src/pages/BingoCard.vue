@@ -9,8 +9,9 @@ const show = ref<Show | null>(null)
 const bingoGrid = ref<string[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+const selectedCells = ref<Set<number>>(new Set())
 
-const generateBingoGrid = (phrases: string[]) => {
+const generateBingoGrid = (phrases: string[], centerSquare?: string) => {
   // Create a copy of phrases array to shuffle
   const shuffledPhrases = [...phrases]
   
@@ -20,8 +21,22 @@ const generateBingoGrid = (phrases: string[]) => {
     ;[shuffledPhrases[i], shuffledPhrases[j]] = [shuffledPhrases[j], shuffledPhrases[i]]
   }
 
-  // Take first 25 phrases (5x5 grid)
-  return shuffledPhrases.slice(0, 25)
+  // Take first 24 phrases (for a 5x5 grid minus the center)
+  const result = shuffledPhrases.slice(0, 24)
+  
+  // Insert the center square at the middle position (index 12)
+  // The center is the 13th element (index 12) in a 5x5 grid (row 3, column 3)
+  result.splice(12, 0, centerSquare || 'FREE SPACE')
+  
+  return result
+}
+
+const toggleCell = (index: number) => {
+  if (selectedCells.value.has(index)) {
+    selectedCells.value.delete(index)
+  } else {
+    selectedCells.value.add(index)
+  }
 }
 
 const loadShow = async () => {
@@ -39,7 +54,7 @@ const loadShow = async () => {
       return
     }
     show.value = fetchedShow
-    bingoGrid.value = generateBingoGrid(fetchedShow.phrases || [])
+    bingoGrid.value = generateBingoGrid(fetchedShow.phrases || [], fetchedShow.centerSquare)
   } catch (e) {
     error.value = 'Failed to load show'
     console.error(e)
@@ -74,6 +89,11 @@ onMounted(() => {
           v-for="(phrase, index) in bingoGrid" 
           :key="index"
           class="bingo-cell"
+          :class="{ 
+            'selected': selectedCells.has(index),
+            'center-square': index === 12
+          }"
+          @click="toggleCell(index)"
         >
           {{ phrase }}
         </div>
@@ -137,6 +157,21 @@ onMounted(() => {
 .bingo-cell:hover {
   transform: scale(1.02);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.bingo-cell.selected {
+  background-color: #333;
+  color: white;
+  border-color: #222;
+}
+
+.center-square {
+  font-weight: bold;
+  background-color: #f0f0f0;
+}
+
+.center-square.selected {
+  background-color: #333;
 }
 
 .loading, .error {
