@@ -1,0 +1,1 @@
+{"root":["./src/main.ts","./src/vite-env.d.ts","./src/assets/mock-shows.ts","./src/router/index.ts","./src/services/showservice.ts","./src/types/show.ts","./src/app.vue","./src/components/createshow.vue","./src/components/showdetail.vue","./src/components/showslist.vue","./src/pages/bingocard.vue","./src/pages/createshowpage.vue"],"version":"5.6.2"}
