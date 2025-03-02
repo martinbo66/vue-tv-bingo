@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { Show } from '../types/Show'
+import type { CreateShowInput } from '../types/Show'
 
 const emit = defineEmits<{
-  (e: 'showCreated', show: Show): void
+  (e: 'showCreated', show: CreateShowInput): void
 }>()
 
 const showTitle = ref('')
@@ -22,7 +22,7 @@ const removePhrase = (index: number) => {
 const createShow = () => {
   if (!showTitle.value || phrases.value.length === 0) return
 
-  const newShow: Show = {
+  const newShow: CreateShowInput = {
     showTitle: showTitle.value,
     phrases: phrases.value.filter(phrase => phrase.trim() !== '')
   }
@@ -83,12 +83,12 @@ const createShow = () => {
       <div class="form-group">
         <label>Phrases*</label>
         <div 
-          v-for="(phrase, index) in phrases" 
-          :key="index"
+          v-for="index in phrases.length" 
+          :key="index-1"
           class="phrase-input"
         >
           <input 
-            v-model="phrases[index]"
+            v-model="phrases[index-1]"
             type="text"
             required
             placeholder="Enter a phrase"
@@ -96,7 +96,7 @@ const createShow = () => {
           <button 
             type="button" 
             class="remove-phrase"
-            @click="removePhrase(index)"
+            @click="removePhrase(index-1)"
             :disabled="phrases.length === 1"
           >
             Remove

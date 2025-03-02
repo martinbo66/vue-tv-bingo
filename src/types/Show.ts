@@ -5,3 +5,5 @@ export interface Show {
     centerSquare?: string;
     phrases: string[];
 }
+
+export type CreateShowInput = Omit<Show, 'id'>;

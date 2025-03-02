@@ -15,18 +15,18 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import CreateShow from '../components/CreateShow.vue'
-import type { Show } from '../types/Show'
+import type { Show, CreateShowInput } from '../types/Show'
 import { showService } from '../services/showService'
 
 const router = useRouter()
 const error = ref<string | null>(null)
 
-const onShowCreated = async (show: Show) => {
+const onShowCreated = async (showInput: CreateShowInput) => {
   try {
     // Get all shows to determine the next ID
     const shows = await showService.getShows()
     const maxId = shows.reduce((max, s) => Math.max(max, s.id), 0)
-    const newShow = { ...show, id: maxId + 1 }
+    const newShow: Show = { ...showInput, id: maxId + 1 }
     
     await showService.addShow(newShow)
     router.push('/')

@@ -31,16 +31,18 @@ onMounted(async () => {
 })
 const newPhrase = ref('')
 
-const phraseCount = computed(() => show.value.phrases.length)
+const phraseCount = computed(() => show.value?.phrases?.length || 0)
 
 const addPhrase = () => {
-  if (newPhrase.value.trim()) {
-    show.value.phrases.push(newPhrase.value)
-    newPhrase.value = ''
-  }
+  if (!show.value || !newPhrase.value.trim()) return
+  
+  show.value.phrases.push(newPhrase.value)
+  newPhrase.value = ''
 }
 
 const removePhrase = (index: number) => {
+  if (!show.value) return
+  
   show.value.phrases.splice(index, 1)
 }
 
@@ -71,7 +73,7 @@ const saveShow = async () => {
 
     <div v-else>
       <h2>Edit TV Show</h2>
-    <form @submit.prevent="saveShow" class="edit-form">
+    <form v-if="show" @submit.prevent="saveShow" class="edit-form">
       <div class="form-group">
         <label>Show Title:</label>
         <input v-model="show.showTitle" required />
