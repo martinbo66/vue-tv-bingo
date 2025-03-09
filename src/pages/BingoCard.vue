@@ -49,6 +49,7 @@ const navigateToShowDetail = () => {
 const regenerateBingoCard = () => {
   if (show.value) {
     bingoGrid.value = generateBingoGrid(show.value.phrases, show.value.centerSquare)
+    selectedCells.value.clear()
   }
 }
 
@@ -105,13 +106,10 @@ onMounted(() => {
     <div v-else-if="show" class="bingo-card-container">
       <div class="header">
         <h2 @click="navigateToShowDetail" class="show-title">{{ show.showTitle }}</h2>
-        <router-link to="/" class="back-link">← Back to Shows</router-link>
-      </div>
-
-      <div class="regenerate-container">
         <button @click="regenerateBingoCard" class="regenerate-button">
           Regenerate Bingo Card
         </button>
+        <router-link to="/" class="back-link">← Back to Shows</router-link>
       </div>
 
       <div class="bingo-grid">
@@ -201,8 +199,8 @@ onMounted(() => {
 }
 
 .bingo-cell:hover {
-  transform: scale(1.02);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transform: scale(1.06);
+  box-shadow: 0 2px 4px rgba(177, 17, 17, 0.1);
 }
 
 .bingo-cell.selected {
