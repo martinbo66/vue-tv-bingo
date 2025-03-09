@@ -46,6 +46,12 @@ const navigateToShowDetail = () => {
   }
 }
 
+const regenerateBingoCard = () => {
+  if (show.value) {
+    bingoGrid.value = generateBingoGrid(show.value.phrases, show.value.centerSquare)
+  }
+}
+
 const loadShow = async () => {
   const showId = parseInt(route.params.id as string)
   if (isNaN(showId)) {
@@ -102,6 +108,12 @@ onMounted(() => {
         <router-link to="/" class="back-link">← Back to Shows</router-link>
       </div>
 
+      <div class="regenerate-container">
+        <button @click="regenerateBingoCard" class="regenerate-button">
+          Regenerate Bingo Card
+        </button>
+      </div>
+
       <div class="bingo-grid">
         <div 
           v-for="(phrase, index) in bingoGrid" 
@@ -132,6 +144,12 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .show-title {
@@ -233,5 +251,22 @@ onMounted(() => {
 
 .edit-button:hover {
   background-color: #3a5ce5;
+}
+
+.regenerate-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.regenerate-button {
+  background-color: #4a6cf7;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
 </style>
