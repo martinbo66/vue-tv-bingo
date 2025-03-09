@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { showService } from '../services/showService'
 import type { Show } from '../types/Show'
+import type { Ref } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -11,6 +12,7 @@ const bingoGrid = ref<string[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 const selectedCells = ref<Set<number>>(new Set())
+const winningLines: Ref<number[][]> = ref([])
 
 const generateBingoGrid = (phrases: string[], centerSquare?: string) => {
   // Create a copy of phrases array to shuffle
@@ -32,12 +34,37 @@ const generateBingoGrid = (phrases: string[], centerSquare?: string) => {
   return result
 }
 
+const checkWinningCombinations = () => {
+  const possibleWins: Array<Array<number>> = [
+    // Rows
+    [0, 1, 2, 3, 4],
+    [5, 6, 7, 8, 9],
+    [10, 11, 12, 13, 14],
+    [15, 16, 17, 18, 19],
+    [20, 21, 22, 23, 24],
+    // Columns
+    [0, 5, 10, 15, 20],
+    [1, 6, 11, 16, 21],
+    [2, 7, 12, 17, 22],
+    [3, 8, 13, 18, 23],
+    [4, 9, 14, 19, 24],
+    // Diagonals
+    [0, 6, 12, 18, 24],
+    [4, 8, 12, 16, 20]
+  ]
+
+  winningLines.value = possibleWins.filter((line: Array<number>) => 
+    line.every(cell => selectedCells.value.has(cell))
+  )
+}
+
 const toggleCell = (index: number) => {
   if (selectedCells.value.has(index)) {
     selectedCells.value.delete(index)
   } else {
     selectedCells.value.add(index)
   }
+  checkWinningCombinations()
 }
 
 const navigateToShowDetail = () => {
@@ -85,6 +112,12 @@ const loadShow = async () => {
   }
 }
 
+const isWinningCell = computed(() => (index: number) => 
+  winningLines.value.some(line => line.includes(index))
+)
+
+const hasBingo = computed(() => winningLines.value.length > 0)
+
 onMounted(() => {
   loadShow()
 })
@@ -119,12 +152,17 @@ onMounted(() => {
           class="bingo-cell"
           :class="{ 
             'selected': selectedCells.has(index),
-            'center-square': index === 12
+            'center-square': index === 12,
+            'winning': isWinningCell(index)
           }"
           @click="toggleCell(index)"
         >
           {{ phrase }}
         </div>
+      </div>
+
+      <div v-if="hasBingo" class="bingo-alert">
+        <div class="bingo-text">BINGO!</div>
       </div>
     </div>
   </div>
@@ -311,6 +349,49 @@ onMounted(() => {
 
 .regenerate-container {
   padding: 0 1rem;
+}
+
+.bingo-cell.winning {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #45a049;
+  animation: pulse 1s infinite;
+}
+
+.bingo-alert {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 2rem 4rem;
+  border-radius: 1rem;
+  z-index: 100;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.bingo-text {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  animation: bounce 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 @media (max-width: 600px) {
