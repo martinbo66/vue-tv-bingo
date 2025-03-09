@@ -77,6 +77,7 @@ const regenerateBingoCard = () => {
   if (show.value) {
     bingoGrid.value = generateBingoGrid(show.value.phrases, show.value.centerSquare)
     selectedCells.value.clear()
+    winningLines.value = []
   }
 }
 
