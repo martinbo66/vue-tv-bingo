@@ -10,6 +10,9 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
 
     strategy:
       matrix:
@@ -40,4 +43,7 @@ jobs:
         path: './dist'
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v4
-        
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        folder: dist
+ 
