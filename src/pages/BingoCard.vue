@@ -267,4 +267,66 @@ onMounted(() => {
   font-weight: 500;
   transition: background-color 0.2s;
 }
+
+.bingo-card-container {
+  max-width: 100%;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+.bingo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  max-width: min(100%, 800px);
+  margin: 0 auto;
+  aspect-ratio: 1;
+}
+
+.bingo-cell {
+  aspect-ratio: 1;
+  border: 2px solid #333;
+  border-radius: 4px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  word-break: break-word;
+  background-color: var(--cell-bg-color);
+  transition: background-color 0.2s;
+}
+
+.header {
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.show-title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  margin: 0;
+}
+
+.regenerate-container {
+  padding: 0 1rem;
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .back-link {
+    font-size: 0.9rem;
+  }
+
+  .regenerate-button {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
 </style>
