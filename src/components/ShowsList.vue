@@ -122,74 +122,71 @@ onMounted(() => {
 
 .shows-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 15px;
 }
 
 .show-card {
     background-color: rgb(191, 122, 216);
     border-radius: 8px;
-    padding: 20px;
+    padding: 12px;
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    height: 100px;
+    overflow: hidden;
 }
 
 .show-content {
     flex: 1;
+    overflow: hidden;
 }
 
 .show-controls {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .control-btn {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 4px;
+    padding: 3px;
     border-radius: 4px;
     transition: all 0.2s;
+    font-size: 1em;
 }
 
 .control-btn:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.edit-btn {
-    font-size: 1.2em;
-}
-
-.delete-btn {
-    font-size: 1.2em;
-}
-
 .show-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-3px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .show-card h3 {
-    margin: 0 0 12px 0;
+    margin: 0 0 8px 0;
     color: #2c3e50;
-    font-size: 1.4em;
-}
-
-.show-card h4 {
-    color: #2c3e50;
-    margin: 16px 0 8px;
     font-size: 1.1em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .game-title {
     color: #666;
-    font-size: 0.95em;
-    margin: 8px 0;
+    font-size: 0.85em;
+    margin: 4px 0;
     font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .loading {
