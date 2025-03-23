@@ -31,6 +31,9 @@ const generateBingoGrid = (phrases: string[], centerSquare?: string) => {
   // The center is the 13th element (index 12) in a 5x5 grid (row 3, column 3)
   result.splice(12, 0, centerSquare || 'FREE SPACE')
   
+  // Automatically select the center square
+  selectedCells.value.add(12)
+  
   return result
 }
 
@@ -75,9 +78,9 @@ const navigateToShowDetail = () => {
 
 const regenerateBingoCard = () => {
   if (show.value) {
-    bingoGrid.value = generateBingoGrid(show.value.phrases, show.value.centerSquare)
     selectedCells.value.clear()
-    winningLines.value = []
+    bingoGrid.value = generateBingoGrid(show.value.phrases, show.value.centerSquare)
+    checkWinningCombinations()
   }
 }
 
@@ -297,14 +300,30 @@ onMounted(() => {
 }
 
 .regenerate-button {
-  background-color: #4a6cf7;
+  background-color: #4CAF50;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.regenerate-button:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.regenerate-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .bingo-card-container {
@@ -315,6 +334,7 @@ onMounted(() => {
 
 .bingo-grid {
   display: grid;
+  background-color: #967fa8;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
   max-width: min(100%, 800px);
@@ -334,7 +354,7 @@ onMounted(() => {
   cursor: pointer;
   font-size: clamp(0.75rem, 2vw, 1rem);
   word-break: break-word;
-  background-color: var(--cell-bg-color);
+  background-color: rgb(200, 234, 197);
   transition: background-color 0.2s;
 }
 
