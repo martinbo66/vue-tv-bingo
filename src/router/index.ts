@@ -29,7 +29,7 @@ const router = createRouter({
 })
 
 // Add navigation guard to clean up URLs
-router.beforeEach((to, from, next) => {
+router.beforeEach((_to, _from, next) => {
   if (window.location.pathname !== '/') {
     window.history.replaceState({}, '', '/')
   }
