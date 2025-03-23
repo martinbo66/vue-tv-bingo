@@ -5,7 +5,7 @@ import CreateShowPage from '../pages/CreateShowPage.vue'
 import BingoCard from '../pages/BingoCard.vue'
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -26,6 +26,14 @@ const router = createRouter({
       component: CreateShowPage
     }
   ]
+})
+
+// Add navigation guard to clean up URLs
+router.beforeEach((_to, _from, next) => {
+  if (window.location.pathname !== '/') {
+    window.history.replaceState({}, '', '/')
+  }
+  next()
 })
 
 export default router

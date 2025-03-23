@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { showService } from '../services/showService'
 import type { Show } from '../types/Show'
+import type { Ref } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -11,6 +12,7 @@ const bingoGrid = ref<string[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
 const selectedCells = ref<Set<number>>(new Set())
+const winningLines: Ref<number[][]> = ref([])
 
 const generateBingoGrid = (phrases: string[], centerSquare?: string) => {
   // Create a copy of phrases array to shuffle
@@ -29,7 +31,34 @@ const generateBingoGrid = (phrases: string[], centerSquare?: string) => {
   // The center is the 13th element (index 12) in a 5x5 grid (row 3, column 3)
   result.splice(12, 0, centerSquare || 'FREE SPACE')
   
+  // Automatically select the center square
+  selectedCells.value.add(12)
+  
   return result
+}
+
+const checkWinningCombinations = () => {
+  const possibleWins: Array<Array<number>> = [
+    // Rows
+    [0, 1, 2, 3, 4],
+    [5, 6, 7, 8, 9],
+    [10, 11, 12, 13, 14],
+    [15, 16, 17, 18, 19],
+    [20, 21, 22, 23, 24],
+    // Columns
+    [0, 5, 10, 15, 20],
+    [1, 6, 11, 16, 21],
+    [2, 7, 12, 17, 22],
+    [3, 8, 13, 18, 23],
+    [4, 9, 14, 19, 24],
+    // Diagonals
+    [0, 6, 12, 18, 24],
+    [4, 8, 12, 16, 20]
+  ]
+
+  winningLines.value = possibleWins.filter((line: Array<number>) => 
+    line.every(cell => selectedCells.value.has(cell))
+  )
 }
 
 const toggleCell = (index: number) => {
@@ -38,6 +67,7 @@ const toggleCell = (index: number) => {
   } else {
     selectedCells.value.add(index)
   }
+  checkWinningCombinations()
 }
 
 const navigateToShowDetail = () => {
@@ -48,8 +78,9 @@ const navigateToShowDetail = () => {
 
 const regenerateBingoCard = () => {
   if (show.value) {
-    bingoGrid.value = generateBingoGrid(show.value.phrases, show.value.centerSquare)
     selectedCells.value.clear()
+    bingoGrid.value = generateBingoGrid(show.value.phrases, show.value.centerSquare)
+    checkWinningCombinations()
   }
 }
 
@@ -85,6 +116,12 @@ const loadShow = async () => {
   }
 }
 
+const isWinningCell = computed(() => (index: number) => 
+  winningLines.value.some(line => line.includes(index))
+)
+
+const hasBingo = computed(() => winningLines.value.length > 0)
+
 onMounted(() => {
   loadShow()
 })
@@ -119,12 +156,17 @@ onMounted(() => {
           class="bingo-cell"
           :class="{ 
             'selected': selectedCells.has(index),
-            'center-square': index === 12
+            'center-square': index === 12,
+            'winning': isWinningCell(index)
           }"
           @click="toggleCell(index)"
         >
           {{ phrase }}
         </div>
+      </div>
+
+      <div v-if="hasBingo" class="bingo-alert">
+        <div class="bingo-text">BINGO!</div>
       </div>
     </div>
   </div>
@@ -258,13 +300,135 @@ onMounted(() => {
 }
 
 .regenerate-button {
-  background-color: #4a6cf7;
+  background-color: #4CAF50;
   color: white;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.regenerate-button:hover {
+  background-color: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.regenerate-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.bingo-card-container {
+  max-width: 100%;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+.bingo-grid {
+  display: grid;
+  background-color: #967fa8;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  max-width: min(100%, 800px);
+  margin: 0 auto;
+  aspect-ratio: 1;
+}
+
+.bingo-cell {
+  aspect-ratio: 1;
+  border: 2px solid #333;
+  border-radius: 4px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  word-break: break-word;
+  background-color: rgb(200, 234, 197);
   transition: background-color 0.2s;
+}
+
+.header {
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.show-title {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  margin: 0;
+}
+
+.regenerate-container {
+  padding: 0 1rem;
+}
+
+.bingo-cell.winning {
+  background-color: #4CAF50;
+  color: white;
+  border-color: #45a049;
+  animation: pulse 1s infinite;
+}
+
+.bingo-alert {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 2rem 4rem;
+  border-radius: 1rem;
+  z-index: 100;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.bingo-text {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #FFD700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  animation: bounce 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .back-link {
+    font-size: 0.9rem;
+  }
+
+  .regenerate-button {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
 }
 </style>
